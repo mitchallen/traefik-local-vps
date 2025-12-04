@@ -1,4 +1,4 @@
-.PHONY: all up down help
+.PHONY: all up down flush-dns help
 
 all: help
 
@@ -10,6 +10,9 @@ down: ## Stop docker containers
 
 reup: ## Recreate and start docker containers in detached mode
 	docker compose up -d --force-recreate
+
+flush-dns: ## Flush the macOS DNS cache
+	sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
 
 help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'

@@ -4,17 +4,37 @@ services:
     image: traefik:v3.1
     container_name: traefik
     command:
+      # http://traefik.myvps.local:8080/
+      # http://traefik.myvps.local:8080/dashboard/#/
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.myvps.local`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=web"
+
     ports:
       - "80:80"
-      - "8080:8080" # dashboard
+      - "8080:8080"
+
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
       - traefik_proxy
+
+  random-server:
+    image: ghcr.io/mitchallen/random-server
+    networks:
+      - traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.random-server.rule=Host(`random.myvps.local`)"
+      - "traefik.http.services.random-server.loadbalancer.server.port=3100"
+      # - "traefik.http.routers.dashboard.entrypoints=web"
 
 networks:
   traefik_proxy:
