@@ -30,9 +30,26 @@ This is made possible by the `traefik.http.routers.dashboard.entrypoints=web` la
 
 ## Host Configuration
 
-You need to add `127.0.0.1 random.myvps.local traefik.myvps.local` to your `/etc/hosts` file. You can do this by running:
+1. Edit your local hosts file
 
 ```bash
 sudo nano /etc/hosts
 ```
-Then, add the line and save the file.
+
+2. Add this line:
+
+```sh
+127.0.0.1 traefik.myvps.local random.myvps.local 
+```
+
+3. Save the file.
+
+4. Browse to either url:
+
+```sh
+traefik.myvps.local
+```
+
+```sh
+random.myvps.local
+```
