@@ -26,8 +26,11 @@ services:
     networks:
       - traefik_proxy
 
-  random-server:
+  random-server-01:
     image: ghcr.io/mitchallen/random-server
+    environment:
+      - APP_NAME=random-01
+    restart: unless-stopped
     networks:
       - traefik_proxy
     labels:
@@ -35,6 +38,21 @@ services:
       - "traefik.http.routers.random-server.rule=Host(`random.myvps.local`)"
       - "traefik.http.services.random-server.loadbalancer.server.port=3100"
       # - "traefik.http.routers.dashboard.entrypoints=web"
+
+  path1:
+    image: ghcr.io/mitchallen/random-server
+    environment:
+      - APP_NAME=path1
+    restart: unless-stopped
+    networks:
+      - traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.path1.rule=Host(`service.myvps.local`) && PathPrefix(`/path1`)"
+      - "traefik.http.routers.path1.entrypoints=web"
+      - "traefik.http.routers.path1.middlewares=strip-path1"
+      - "traefik.http.middlewares.strip-path1.stripPrefix.prefixes=/path1"
+      - "traefik.http.services.path1.loadbalancer.server.port=3100"
 
 networks:
   traefik_proxy:
