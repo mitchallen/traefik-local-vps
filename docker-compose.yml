@@ -37,15 +37,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.random-server.rule=Host(`random.myvps.test`)"
       - "traefik.http.services.random-server.loadbalancer.server.port=3100"
-      # - "traefik.http.routers.dashboard.entrypoints=web"
 
-  # http://service.myvps.test/path1
-  # http://service.myvps.test/path1/api-docs/
-  #
-  # curl -X 'GET' \
-  #   'http://service.myvps.test/path1/v1/coords' \
-  #   -H 'accept: application/json' \
-  #   -H 'x-api-key: demo-key'
   path1:
     image: ghcr.io/mitchallen/random-server
     environment:
@@ -58,19 +50,13 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.path1.rule=Host(`service.myvps.test`) && PathPrefix(`/path1`)"
-      # - "traefik.http.routers.path1.entrypoints=web"
       - "traefik.http.services.path1.loadbalancer.server.port=3100"
-      # Redirect /path1 and /path1/ to /path1/api-docs/
-      - "traefik.http.routers.path1-root.rule=Host(`service.myvps.test`) && (Path(`/path1`) || Path(`/path1/`))"
-      - "traefik.http.routers.path1-root.priority=10"
+      # Redirect root paths to Swagger docs
       - "traefik.http.middlewares.path1-redirect.redirectregex.regex=^/path1/?$$"
       - "traefik.http.middlewares.path1-redirect.redirectregex.replacement=/path1/api-docs/"
       - "traefik.http.middlewares.path1-redirect.redirectregex.permanent=false"
-      - "traefik.http.routers.path1-root.middlewares=path1-redirect"
-      - "traefik.http.routers.path1-root.service=path1"
-
+      - "traefik.http.routers.path1.middlewares=path1-redirect"
 
 networks:
   traefik_proxy:
     name: traefik_proxy
-
