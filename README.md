@@ -22,7 +22,7 @@ docker compose up -d --force-recreate
 
 ## Traefik Dashboard
 
-The Traefik dashboard is available via [http://traefik.myvps.local](http://traefik.myvps.local).
+The Traefik dashboard is available via [http://traefik.myvps.test](http://traefik.myvps.test).
 
 This is made possible by the `traefik.http.routers.dashboard.entrypoints=web` label in `docker-compose.yml`, which exposes the dashboard on the standard HTTP port (80).
 
@@ -39,7 +39,7 @@ sudo nano /etc/hosts
 2. Add this line:
 
 ```sh
-127.0.0.1 traefik.myvps.local random.myvps.local 
+127.0.0.1 traefik.myvps.test random.myvps.test service.myvps.test
 ```
 
 3. Save the file.
@@ -47,18 +47,28 @@ sudo nano /etc/hosts
 4. Browse to either url:
 
 ```sh
-traefik.myvps.local
+traefik.myvps.test
 ```
 
 ```sh
-random.myvps.local
+random.myvps.test
 ```
 
 ## Using a path
 
+To test a path:
+
+```sh
+http://service.myvps.test/path1
+```
+
+```sh
+http://service.myvps.test/path1/api-docs/
+```
+
 ```sh
 curl -X 'GET' \
-   'http://service.myvps.local/path1/v1/coords' \
+   'http://service.myvps.test/path1/v1/coords' \
    -H 'accept: application/json' \
    -H 'x-api-key: demo-key'
 ```

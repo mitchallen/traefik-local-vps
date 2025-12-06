@@ -4,8 +4,8 @@ services:
     image: traefik:v3.1
     container_name: traefik
     command:
-      # http://traefik.myvps.local:8080/
-      # http://traefik.myvps.local:8080/dashboard/#/
+      # http://traefik.myvps.test:8080/
+      # http://traefik.myvps.test:8080/dashboard/#/
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -13,7 +13,7 @@ services:
 
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.dashboard.rule=Host(`traefik.myvps.local`)"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.myvps.test`)"
       - "traefik.http.routers.dashboard.service=api@internal"
       - "traefik.http.routers.dashboard.entrypoints=web"
 
@@ -35,15 +35,15 @@ services:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.random-server.rule=Host(`random.myvps.local`)"
+      - "traefik.http.routers.random-server.rule=Host(`random.myvps.test`)"
       - "traefik.http.services.random-server.loadbalancer.server.port=3100"
       # - "traefik.http.routers.dashboard.entrypoints=web"
 
-  # http://service.myvps.local/path1
-  # http://service.myvps.local/path1/api-docs/
+  # http://service.myvps.test/path1
+  # http://service.myvps.test/path1/api-docs/
   #
   # curl -X 'GET' \
-  #   'http://service.myvps.local/path1/v1/coords' \
+  #   'http://service.myvps.test/path1/v1/coords' \
   #   -H 'accept: application/json' \
   #   -H 'x-api-key: demo-key'
   path1:
@@ -57,17 +57,18 @@ services:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.path1.rule=Host(`service.myvps.local`) && PathPrefix(`/path1`)"
+      - "traefik.http.routers.path1.rule=Host(`service.myvps.test`) && PathPrefix(`/path1`)"
       # - "traefik.http.routers.path1.entrypoints=web"
       - "traefik.http.services.path1.loadbalancer.server.port=3100"
       # Redirect /path1 and /path1/ to /path1/api-docs/
-      - "traefik.http.routers.path1-root.rule=Host(`service.myvps.local`) && (Path(`/path1`) || Path(`/path1/`))"
+      - "traefik.http.routers.path1-root.rule=Host(`service.myvps.test`) && (Path(`/path1`) || Path(`/path1/`))"
       - "traefik.http.routers.path1-root.priority=10"
       - "traefik.http.middlewares.path1-redirect.redirectregex.regex=^/path1/?$$"
       - "traefik.http.middlewares.path1-redirect.redirectregex.replacement=/path1/api-docs/"
       - "traefik.http.middlewares.path1-redirect.redirectregex.permanent=false"
       - "traefik.http.routers.path1-root.middlewares=path1-redirect"
       - "traefik.http.routers.path1-root.service=path1"
+
 
 networks:
   traefik_proxy:
