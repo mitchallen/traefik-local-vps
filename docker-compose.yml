@@ -58,11 +58,16 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.path1.rule=Host(`service.myvps.local`) && PathPrefix(`/path1`)"
-      - "traefik.http.routers.path1.entrypoints=web"
-      - "traefik.http.routers.path1.middlewares=strip-path1,forwarded-prefix"
-      - "traefik.http.middlewares.strip-path1.stripPrefix.prefixes=/path1"
-      - "traefik.http.middlewares.forwarded-prefix.headers.customRequestHeaders.X-Forwarded-Prefix=/path1"
+      # - "traefik.http.routers.path1.entrypoints=web"
       - "traefik.http.services.path1.loadbalancer.server.port=3100"
+      # Redirect /path1 and /path1/ to /path1/api-docs/
+      - "traefik.http.routers.path1-root.rule=Host(`service.myvps.local`) && (Path(`/path1`) || Path(`/path1/`))"
+      - "traefik.http.routers.path1-root.priority=10"
+      - "traefik.http.middlewares.path1-redirect.redirectregex.regex=^/path1/?$$"
+      - "traefik.http.middlewares.path1-redirect.redirectregex.replacement=/path1/api-docs/"
+      - "traefik.http.middlewares.path1-redirect.redirectregex.permanent=false"
+      - "traefik.http.routers.path1-root.middlewares=path1-redirect"
+      - "traefik.http.routers.path1-root.service=path1"
 
 networks:
   traefik_proxy:

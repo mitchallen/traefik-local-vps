@@ -53,3 +53,12 @@ traefik.myvps.local
 ```sh
 random.myvps.local
 ```
+
+## Using a path
+
+```sh
+curl -X 'GET' \
+   'http://service.myvps.local/path1/v1/coords' \
+   -H 'accept: application/json' \
+   -H 'x-api-key: demo-key'
+```
