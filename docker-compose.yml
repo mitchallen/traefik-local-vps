@@ -53,9 +53,26 @@ services:
       - "traefik.http.services.path1.loadbalancer.server.port=3100"
       # Redirect root paths to Swagger docs
       - "traefik.http.middlewares.path1-redirect.redirectregex.regex=^/path1/?$$"
-      - "traefik.http.middlewares.path1-redirect.redirectregex.replacement=/path1/api-docs/"
       - "traefik.http.middlewares.path1-redirect.redirectregex.permanent=false"
       - "traefik.http.routers.path1.middlewares=path1-redirect"
+
+  path2:
+    image: ghcr.io/mitchallen/random-server
+    environment:
+      - APP_NAME=path2
+      - BASE_PATH=/path2
+      - SWAGGER_BASE_PATH=/path2
+    restart: unless-stopped
+    networks:
+      - traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.path2.rule=Host(`service.myvps.test`) && PathPrefix(`/path2`)"
+      - "traefik.http.services.path2.loadbalancer.server.port=3100"
+      # Redirect root paths to Swagger docs
+      - "traefik.http.middlewares.path2-redirect.redirectregex.regex=^/path2/?$$"
+      - "traefik.http.middlewares.path2-redirect.redirectregex.permanent=false"
+      - "traefik.http.routers.path2.middlewares=path2-redirect"
 
 networks:
   traefik_proxy:
